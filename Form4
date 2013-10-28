@@ -1,0 +1,204 @@
+Public Sub ValueClear()
+    Txtid.Text = ""
+    Txtbg.Text = ""
+    Txtphno.Text = ""
+    Txtaddress.Text = ""
+    Cmbgender.Text = ""
+    Cmblictype = ""
+    Txtemail.Text = ""
+    Txtdob.Text = ""
+End Sub
+Public Sub Enable()
+    Txtid.Enabled = True
+    Txtbg.Enabled = True
+    Txtdate.Enabled = True
+    Txtphno.Enabled = True
+    Txtaddress.Enabled = True
+    Cmbgender.Enabled = True
+    Cmblictype.Enabled = True
+    Txtdob.Enabled = True
+    Txtemail.Enabled = True
+    cmbname.Enabled = True
+End Sub
+Public Sub Disable()
+    Txtid.Enabled = False
+    Txtbg.Enabled = False
+    Txtdate.Enabled = False
+    Txtphno.Enabled = False
+    Txtaddress.Enabled = False
+    Cmbgender.Enabled = False
+    Cmblictype.Enabled = False
+    Txtdob.Enabled = False
+    Txtemail.Enabled = False
+cmbname.Enabled = False
+End Sub
+Private Sub cmbname_Click()
+    If rs.State = 1 Then rs.Close
+        rs.Open "Select Cost_id,Cost_Address,Cost_Phone from Vistior where Cost_Name = '" & (cmbname.Text) & "'", con, 1, 3
+    If rs.BOF = False Then
+        Txtid.Text = rs.Fields(0)
+        Txtaddress.Text = rs.Fields(1)
+        Txtphno.Text = rs.Fields(2)
+    End If
+End Sub
+
+Private Sub cmdadd_Click()
+    If cmdadd.Caption = "AddNew" Then
+        cmdadd.Caption = "Save"
+        Enable
+        cmbname.SetFocus
+        ValueClear
+        If rs.State = 1 Then rs.Close
+            rs.Open "Select Max(Cost_id) from Vistior", con, 1, 3
+        If rs.BOF = False Then
+            Txtid.Text = rs.Fields(0) + 1
+        End If
+    ElseIf cmdadd.Caption = "Save" Then
+        cmdadd.Caption = "AddNew"
+    If Txtid.Text <> "" And Txtaddress.Text <> "" And Txtdate.Text <> "" And Txtemail.Text <> "" And Txtbg.Text <> "" Then
+        If rs.State = 1 Then rs.Close
+        con.Execute "Insert into addmision values (" & (Txtid.Text) & ",'" & (Txtdate.Text) & "','" & (cmbname.Text) & "','" & (Txtaddress.Text) & "','" & (Txtphno.Text) & "','" & (Cmbgender.Text) & "','" & (Txtdob.Text) & "','" & (Txtbg.Text) & "','" & (Txtemail.Text) & "','" & (Cmblictype.Text) & "')"
+        MsgBox ("Saved Successfully")
+        ValueClear
+        Disable
+        flex
+    Else
+        MsgBox ("Enter All Feilds")
+        Disable
+    End If
+    End If
+End Sub
+
+Private Sub cmddelete_Click()
+  If Txtid.Text <> "" And cmbname.Text <> "" And Txtaddress.Text <> "" And Txtdate.Text <> "" And Txtemail.Text <> "" And Txtbg.Text <> "" Then
+        If rs.State = 1 Then rs.Close
+con.Execute "Delete from addmision where Add_id  = " & (Txtid.Text) & ""
+con.Execute "Delete from lincense where cust_id  = " & (Txtid.Text) & ""
+con.Execute "Delete from FEES where CUSTM_ID  = " & (Txtid.Text) & ""
+         
+         MsgBox ("Record Deleted Successfully")
+         MSFlexGrid1.Clear
+         flex
+    Else
+        MsgBox ("Enter all Fields")
+    End If
+End Sub
+
+Private Sub cmdupdate_Click()
+    If cmdupdate.Caption = "Modify" Then
+        cmdupdate.Caption = "Update"
+        Enable
+    ElseIf cmdupdate.Caption = "Update" Then
+        cmdupdate.Caption = "Modify"
+        If rs.State = 1 Then rs.Close
+        If Txtid.Text <> "" And cmbname.Text <> "" And Txtaddress.Text <> "" And Txtdate.Text <> "" And Txtemail.Text <> "" And Txtbg.Text <> "" Then
+            con.Execute "Update addmision set Add_date = '" & (Txtdate.Text) & "',Add_name = '" & (cmbname.Text) & "',Add_address = '" & (Txtaddress.Text) & "',Add_phone= '" & (Txtphno.Text) & "',Add_gender= '" & (Cmbgender.Text) & "',Add_birth= '" & (Txtdob.Text) & "',Add_bloodgroup= '" & (Txtbg.Text) & "',Add_email= '" & (Txtemail.Text) & "',Add_lincetype= '" & (Cmblictype.Text) & "' where Add_id = " & (Txtid.Text) & ""
+            MsgBox ("Modified Successfully")
+            ValueClear
+            Disable
+            flex
+        Else
+            MsgBox ("Enter all Fields")
+            Disable
+        End If
+    End If
+End Sub
+
+Private Sub Command4_Click()
+    Unload Me
+End Sub
+
+Private Sub Command8_Click()
+rs.Close
+    Unload Me
+DRIVINGMDI.File.Enabled = True
+    DRIVINGMDI.Forms.Enabled = True
+    DRIVINGMDI.Reports.Enabled = True
+End Sub
+
+Private Sub Form_Load()
+    cmdadd.Caption = "AddNew"
+    cmdupdate.Caption = "Modify"
+    cmddelete.Caption = "Delete"
+If rs.State = 1 Then rs.Close
+rs.Open "select * from addmision ", con, 1, 3
+rs.MoveLast
+If rs.BOF = False Then
+           Txtid.Text = rs!Add_id
+           Txtdate.Text = rs!Add_date
+           cmbname.Text = rs!Add_Name
+           Txtaddress.Text = rs!Add_address
+           Txtphno.Text = rs!Add_phone
+           Cmbgender.Text = rs!Add_gender
+           Txtdob.Text = rs!Add_birth
+           Txtbg.Text = rs!Add_bloodgroup
+           Txtemail.Text = rs!Add_email
+           Cmblictype.Text = rs!Add_lincetype
+    Disable
+    flex
+    Txtdate.Text = Format(Now, "dd/mmm/yyyy")
+        If rs.State = 1 Then rs.Close
+        rs.Open "Select Cost_id,Cost_Name from Vistior", con, 1, 3
+    If rs.BOF = False Then
+        While Not rs.EOF
+            cmbname.AddItem rs!Cost_Name
+            cmbname.ItemData(cmbname.NewIndex) = rs!Cost_id
+            rs.MoveNext
+        Wend
+    End If
+    End If
+End Sub
+Public Sub flex()
+        MSFlexGrid1.TextMatrix(0, 0) = "ID"
+        MSFlexGrid1.TextMatrix(0, 1) = "DATE"
+        MSFlexGrid1.TextMatrix(0, 2) = "NAME"
+        MSFlexGrid1.TextMatrix(0, 3) = "ADDRESS"
+        MSFlexGrid1.TextMatrix(0, 4) = "PHONE"
+        MSFlexGrid1.TextMatrix(0, 5) = "GENDER"
+        MSFlexGrid1.TextMatrix(0, 6) = "BIRTH"
+        MSFlexGrid1.TextMatrix(0, 7) = "BG"
+        MSFlexGrid1.TextMatrix(0, 8) = "EMAIL"
+        MSFlexGrid1.TextMatrix(0, 9) = "LINCENSE"
+        
+        MSFlexGrid1.ColWidth(0) = 400
+        MSFlexGrid1.ColWidth(1) = 1500
+        MSFlexGrid1.ColWidth(2) = 2500
+        MSFlexGrid1.ColWidth(3) = 2500
+        MSFlexGrid1.ColWidth(4) = 2000
+        MSFlexGrid1.ColWidth(8) = 2000
+    Dim inti As Integer
+    If rs.State = 1 Then rs.Close
+        rs.Open "select * from addmision", con, 1, 3
+       inti = 1
+        If rs.BOF = False Then
+        While rs.EOF = False
+            MSFlexGrid1.TextMatrix(inti, 0) = rs!Add_id
+            MSFlexGrid1.TextMatrix(inti, 1) = rs!Add_date
+            MSFlexGrid1.TextMatrix(inti, 2) = rs!Add_Name
+            MSFlexGrid1.TextMatrix(inti, 3) = rs!Add_address
+            MSFlexGrid1.TextMatrix(inti, 4) = rs!Add_phone
+            MSFlexGrid1.TextMatrix(inti, 5) = rs!Add_gender
+            MSFlexGrid1.TextMatrix(inti, 6) = rs!Add_birth
+            MSFlexGrid1.TextMatrix(inti, 7) = rs!Add_bloodgroup
+            MSFlexGrid1.TextMatrix(inti, 8) = rs!Add_email
+            MSFlexGrid1.TextMatrix(inti, 9) = rs!Add_lincetype
+            rs.MoveNext
+            inti = inti + 1
+            MSFlexGrid1.Rows = MSFlexGrid1.Rows + 1
+            Wend
+            MSFlexGrid1.Rows = MSFlexGrid1.Rows - 1
+        End If
+End Sub
+
+Private Sub MSFlexGrid1_Click()
+    Txtid.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 0)
+    Txtdate.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 1)
+    cmbname.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 2)
+    Txtaddress.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 3)
+    Txtphno.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 4)
+    Cmbgender.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 5)
+    Txtdob.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 6)
+    Txtbg.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 7)
+    Txtemail.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 8)
+    Cmblictype.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 9)
+End Sub
