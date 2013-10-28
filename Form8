@@ -1,0 +1,61 @@
+Private Sub Command1_Click()
+If Text1.Text = "admin" Then
+If Text2.Text = "s" Then
+DRIVINGMDI.Show
+DRIVINGMDI.Forms.Enabled = True
+DRIVINGMDI.Reports.Enabled = True
+Unload Me
+Else
+ MsgBox "Invalid Password"
+ Text2.SetFocus
+End If
+End If
+End Sub
+Private Sub Command2_Click()
+Unload Me
+End Sub
+
+Private Sub Text1_KeyPress(KeyAscii As Integer)
+Static a As Integer
+Dim s As String
+If KeyAscii = 13 Then
+If LCase(Text1.Text) = "admin" Then
+Text1.Enabled = False
+Text2.SetFocus
+Else
+a = a + 1
+If a = 3 Then
+s = MsgBox("Your chances are over", vbOKCancel, "Samrat Driving School")
+End
+Else
+Text1.Text = ""
+End If
+End If
+End If
+End Sub
+Private Sub Text2_KeyPress(KeyAscii As Integer)
+Static a As Integer
+Dim s As String
+If KeyAscii = 13 Then
+If LCase(Text2.Text) = "s" Then
+Text2.Enabled = False
+Command1.SetFocus
+Else
+a = a + 1
+If a = 3 Then
+s = MsgBox("Your chances are over", vbOKCancel, "Samrat Driving School")
+End
+Else
+Text2.Text = ""
+End If
+End If
+End If
+End Sub
+Private Sub Timer1_Timer()
+Label4.Visible = True
+Label5.Visible = True
+End Sub
+Private Sub Timer2_Timer()
+Label4.Visible = False
+Label5.Visible = False
+End Sub
