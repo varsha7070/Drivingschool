@@ -1,0 +1,148 @@
+Public Sub ValueClear()
+    Txtid.Text = ""
+    Txtname.Text = ""
+    Txtphno.Text = ""
+    Txtaddress.Text = ""
+End Sub
+Public Sub Enable()
+    Txtname.Enabled = True
+    Txtdate.Enabled = True
+    Txtphno.Enabled = True
+    Txtaddress.Enabled = True
+End Sub
+Public Sub Disable()
+    Txtid.Enabled = False
+    Txtname.Enabled = False
+    Txtdate.Enabled = False
+    Txtphno.Enabled = False
+    Txtaddress.Enabled = False
+End Sub
+
+Private Sub cmdadd_Click()
+    If cmdadd.Caption = "AddNew" Then
+        cmdadd.Caption = "Save"
+        Enable
+        Txtname.SetFocus
+        ValueClear
+        If rs.State = 1 Then rs.Close
+            rs.Open "Select Max(Cost_id) from Vistior", con, 1, 3
+        If rs.BOF = False Then
+            Txtid.Text = rs.Fields(0) + 1
+        End If
+    ElseIf cmdadd.Caption = "Save" Then
+        cmdadd.Caption = "AddNew"
+    If Txtid.Text <> "" And Txtname.Text <> "" And Txtaddress.Text <> "" And Txtdate.Text <> "" And Txtphno.Text <> "" Then
+        If rs.State = 1 Then rs.Close
+        con.Execute "Insert into Vistior values (" & (Txtid.Text) & ",'" & (Txtname.Text) & "','" & (Txtaddress.Text) & "','" & (Txtdate.Text) & "','" & (Txtphno.Text) & "')"
+        MsgBox ("Saved Successfully")
+        ValueClear
+        Disable
+        flex
+    Else
+        MsgBox ("Enter All Feilds")
+        Disable
+    End If
+    End If
+End Sub
+
+Private Sub cmddelete_Click()
+  If Txtid.Text <> "" And Txtname.Text <> "" And Txtaddress.Text <> "" And Txtdate.Text <> "" Then
+        If rs.State = 1 Then rs.Close
+         con.Execute "Delete from Vistior where Cost_id  = " & (Txtid.Text) & ""
+         MsgBox ("Record Deleted Successfully")
+       MSFlexGrid1.Clear
+         flex
+    Else
+        MsgBox ("Enter all Fields")
+End If
+End Sub
+
+Private Sub cmdupdate_Click()
+    If cmdupdate.Caption = "Modify" Then
+        cmdupdate.Caption = "Update"
+        Enable
+    ElseIf cmdupdate.Caption = "Update" Then
+        cmdupdate.Caption = "Modify"
+        If rs.State = 1 Then rs.Close
+        If Txtid.Text <> "" And Txtname.Text <> "" And Txtaddress.Text <> "" And Txtdate.Text <> "" Then
+            con.Execute "Update Vistior set Cost_Name = '" & (Txtname.Text) & "',Cost_Address = '" & (Txtaddress.Text) & "',Cost_date = '" & (Txtdate.Text) & "',cost_Phone= '" & (Txtphno.Text) & "' where Cost_id = " & (Txtid.Text) & ""
+            MsgBox ("Modified Successfully")
+            ValueClear
+            Disable
+            flex
+        Else
+            MsgBox ("Enter all Fields")
+            Disable
+        End If
+    End If
+End Sub
+
+Private Sub Command4_Click()
+rs.Close
+    Unload Me
+    DRIVINGMDI.File.Enabled = True
+    DRIVINGMDI.Forms.Enabled = True
+    DRIVINGMDI.Reports.Enabled = True
+End Sub
+
+Private Sub Form_Load()
+    cmdadd.Caption = "AddNew"
+    cmdupdate.Caption = "Modify"
+    cmddelete.Caption = "Delete"
+If rs.State = 1 Then rs.Close
+rs.Open "select * from vistior ", con, 1, 3
+ rs.MoveLast
+ If rs.BOF = False Then
+           Txtid.Text = rs!Cost_id
+           Txtdate.Text = rs!Cost_date
+           Txtname.Text = rs!Cost_Name
+           Txtaddress.Text = rs!Cost_Address
+           Txtphno.Text = rs!cost_Phone
+     
+
+    Disable
+    flex
+    Txtdate.Text = Format(Now, "dd/mmm/yyyy")
+    End If
+
+End Sub
+Public Sub flex()
+        MSFlexGrid1.TextMatrix(0, 0) = "ID"
+        MSFlexGrid1.TextMatrix(0, 1) = "DATE"
+        MSFlexGrid1.TextMatrix(0, 2) = "NAME"
+        MSFlexGrid1.TextMatrix(0, 3) = "ADDRESS"
+        MSFlexGrid1.TextMatrix(0, 4) = "PHONE"
+        
+        MSFlexGrid1.ColWidth(0) = 400
+        MSFlexGrid1.ColWidth(1) = 1500
+        MSFlexGrid1.ColWidth(2) = 2500
+        MSFlexGrid1.ColWidth(3) = 2500
+        MSFlexGrid1.ColWidth(4) = 2000
+    Dim inti As Integer
+    If rs.State = 1 Then rs.Close
+        rs.Open "select Cost_id,Cost_date,Cost_Name,Cost_Address,cost_Phone from Vistior", con, 1, 3
+        inti = 1
+        If rs.BOF = False Then
+       
+        While rs.EOF = False
+            MSFlexGrid1.TextMatrix(inti, 0) = rs!Cost_id
+            MSFlexGrid1.TextMatrix(inti, 1) = rs!Cost_date
+            MSFlexGrid1.TextMatrix(inti, 2) = rs!Cost_Name
+            MSFlexGrid1.TextMatrix(inti, 3) = rs!Cost_Address
+            MSFlexGrid1.TextMatrix(inti, 4) = rs!cost_Phone
+            
+            rs.MoveNext
+            inti = inti + 1
+            MSFlexGrid1.Rows = MSFlexGrid1.Rows + 1
+            Wend
+            MSFlexGrid1.Rows = MSFlexGrid1.Rows - 1
+        End If
+End Sub
+
+Private Sub MSFlexGrid1_Click()
+    Txtid.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 0)
+    Txtdate.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 1)
+    Txtname.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 2)
+    Txtaddress.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 3)
+    Txtphno.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 4)
+End Sub
