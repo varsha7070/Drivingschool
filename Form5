@@ -1,0 +1,195 @@
+Public Sub ValueClear()
+    Txtid.Text = ""
+    txtaddress.Text = ""
+    Txtbalence.Text = ""
+    Txtpaid.Text = ""
+End Sub
+Public Sub Enable()
+    txtaddress.Enabled = True
+    Txtdate.Enabled = True
+    Txtbalence.Enabled = True
+    Txtpaid.Enabled = True
+    cmbname.Enabled = True
+End Sub
+Public Sub Disable()
+    txtaddress.Enabled = False
+    Txtdate.Enabled = False
+    Txtfees.Enabled = False
+    Txtbalence.Enabled = False
+    Txtpaid.Enabled = False
+    cmbname.Enabled = False
+End Sub
+Private Sub cmbname_Click()
+  If rs.State = 1 Then rs.Close
+        rs.Open "Select Add_id,Add_address from addmision where Add_Name = '" & (cmbname.Text) & "'", con, 1, 3
+    If rs.BOF = False Then
+        Txtid.Text = rs.Fields(0)
+        txtaddress.Text = rs.Fields(1)
+    End If
+    Txtpaid.SetFocus
+End Sub
+Private Sub cmdadd_Click()
+    If CMDADD.Caption = "AddNew" Then
+        CMDADD.Caption = "Save"
+        Enable
+        cmbname.SetFocus
+        ValueClear
+        If rs.State = 1 Then rs.Close
+            rs.Open "Select Max(CUSTM_ID) from fees", con, 1, 3
+        If rs.BOF = False Then
+            Txtid.Text = rs.Fields(0) + 1
+        End If
+    ElseIf CMDADD.Caption = "Save" Then
+        CMDADD.Caption = "AddNew"
+    If Txtid.Text <> "" And Txtfees.Text <> "" And Txtdate.Text <> "" And Txtpaid.Text <> "" And Txtbalence.Text <> "" Then
+        If rs.State = 1 Then rs.Close
+        con.Execute "Insert into fees values (" & (Txtid.Text) & ",'" & (Txtdate.Text) & "','" & (cmbname.Text) & "','" & (Txtfees.Text) & "','" & (Txtpaid.Text) & "','" & (Txtbalence.Text) & "','" & (txtaddress.Text) & "')"
+        MsgBox ("Saved Successfully")
+        ValueClear
+        Disable
+        flex
+    Else
+        MsgBox ("Enter All Feilds")
+        Disable
+    End If
+    End If
+End Sub
+Private Sub cmddelete_Click()
+ If Txtid.Text <> "" And cmbname.Text <> "" And Txtfees.Text <> "" And Txtpaid.Text <> "" Then
+        If rs.State = 1 Then rs.Close
+         con.Execute "Delete from fees where CUSTM_ID  = " & (Txtid.Text) & ""
+         MsgBox ("Record Deleted Successfully")
+         MSFlexGrid1.Clear
+         flex
+         Else
+        MsgBox ("Enter all Fields")
+End If
+End Sub
+
+Private Sub cmdupdate_Click()
+    If CMDUPDATE.Caption = "Modify" Then
+        CMDUPDATE.Caption = "Update"
+        Enable
+    ElseIf CMDUPDATE.Caption = "Update" Then
+        CMDUPDATE.Caption = "Modify"
+        If rs.State = 1 Then rs.Close
+        If Txtid.Text <> "" And cmbname.Text <> "" And Txtfees.Text <> "" And Txtpaid.Text <> "" Then
+            con.Execute "Update fees set CUSTM_DATE = '" & (Txtdate.Text) & "',CUSTM_NAME = '" & (cmbname.Text) & "',CUSTM_FEES = '" & (Txtfees.Text) & "',CUSTM_AMOUNT= '" & (Txtpaid.Text) & "',CUSTM_BALANCE= '" & (Txtbalence.Text) & "' ,CUSTM_ADDRESS = '" & (txtaddress.Text) & "'where CUSTM_ID = " & (Txtid.Text) & ""
+            MsgBox ("Modified Successfully")
+            ValueClear
+            Disable
+            flex
+        Else
+            MsgBox ("Enter all Fields")
+            Disable
+        End If
+    End If
+End Sub
+
+Private Sub Command1_Click()
+ If DataEnvironment1.Connection1.State = 1 Then
+DataEnvironment1.Connection1.Close
+End If
+DataEnvironment1.Connection1.Open
+DataEnvironment1.Command5 Txtid.Text
+rs.MoveLast
+DataReport5.Show
+End Sub
+
+Private Sub Command4_Click()
+rs.Close
+    Unload Me
+DRIVINGMDI.File.Enabled = True
+    DRIVINGMDI.Forms.Enabled = True
+    DRIVINGMDI.Reports.Enabled = True
+End Sub
+
+Private Sub Form_Load()
+    CMDADD.Caption = "AddNew"
+    CMDUPDATE.Caption = "Modify"
+    CMDDELETE.Caption = "Delete"
+    If rs.State = 1 Then rs.Close
+rs.Open "select * from fees ", con, 1, 3
+ rs.MoveLast
+ If rs.BOF = False Then
+           
+            Txtid.Text = rs!CUSTM_ID
+            Txtdate.Text = rs!CUSTM_DATE
+            cmbname.Text = rs!CUSTM_NAME
+            Txtfees.Text = rs!CUSTM_FEES
+            Txtpaid.Text = rs!CUSTM_AMOUNT
+            Txtbalence.Text = rs!CUSTM_BALANCE
+
+     Disable
+    flex
+    Txtdate.Text = Format(Now, "dd/mmm/yyyy")
+    Txtfees.Text = "6000"
+      If rs.State = 1 Then rs.Close
+        rs.Open "Select Add_id,Add_Name from addmision", con, 1, 3
+    If rs.BOF = False Then
+        While Not rs.EOF
+            cmbname.AddItem rs!Add_Name
+            cmbname.ItemData(cmbname.NewIndex) = rs!Add_id
+            rs.MoveNext
+        Wend
+      End If
+    End If
+End Sub
+Public Sub flex()
+        MSFlexGrid1.TextMatrix(0, 0) = "ID"
+        MSFlexGrid1.TextMatrix(0, 1) = "DATE"
+        MSFlexGrid1.TextMatrix(0, 2) = "NAME"
+        MSFlexGrid1.TextMatrix(0, 3) = "FEES"
+        MSFlexGrid1.TextMatrix(0, 4) = "AMOUNT"
+        MSFlexGrid1.TextMatrix(0, 5) = "BALANCE"
+        MSFlexGrid1.TextMatrix(0, 6) = "ADDRESS"
+        MSFlexGrid1.ColWidth(0) = 400
+        MSFlexGrid1.ColWidth(1) = 1000
+        MSFlexGrid1.ColWidth(2) = 2200
+        MSFlexGrid1.ColWidth(3) = 1000
+        MSFlexGrid1.ColWidth(4) = 1000
+        MSFlexGrid1.ColWidth(5) = 1000
+        MSFlexGrid1.ColWidth(6) = 1500
+    Dim inti As Integer
+    If rs.State = 1 Then rs.Close
+        rs.Open "select * from FEES", con, 1, 3
+        inti = 1
+        If rs.BOF = False Then
+
+        While rs.EOF = False
+            MSFlexGrid1.TextMatrix(inti, 0) = rs!CUSTM_ID
+            MSFlexGrid1.TextMatrix(inti, 1) = rs!CUSTM_DATE
+            MSFlexGrid1.TextMatrix(inti, 2) = rs!CUSTM_NAME
+            MSFlexGrid1.TextMatrix(inti, 3) = rs!CUSTM_FEES
+            MSFlexGrid1.TextMatrix(inti, 4) = rs!CUSTM_AMOUNT
+            MSFlexGrid1.TextMatrix(inti, 5) = rs!CUSTM_BALANCE
+            MSFlexGrid1.TextMatrix(inti, 6) = rs!CUSTM_ADDRESS
+            rs.MoveNext
+            inti = inti + 1
+            MSFlexGrid1.Rows = MSFlexGrid1.Rows + 1
+            Wend
+            MSFlexGrid1.Rows = MSFlexGrid1.Rows - 1
+        End If
+End Sub
+
+Private Sub MSFlexGrid1_Click()
+    Txtid.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 0)
+    Txtdate.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 1)
+    cmbname.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 2)
+    Txtfees = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 3)
+    Txtpaid.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 4)
+    Txtbalence.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 5)
+txtaddress.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 6)
+
+End Sub
+Private Sub Txtid_Change()
+If Txtid.Text = "" Then
+Command1.Enabled = False
+Else
+Command1.Enabled = True
+End If
+End Sub
+
+Private Sub Txtpaid_Change()
+     Txtbalence.Text = Val(Txtfees.Text) - Val(Txtpaid.Text)
+End Sub
