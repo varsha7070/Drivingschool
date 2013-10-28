@@ -1,0 +1,202 @@
+Public Sub ValueClear()
+    Txtid.Text = ""
+    Txtexpdt.Text = ""
+    Txtissudt.Text = ""
+    Txtexpdt.Text = ""
+    Cmblitype.Text = ""
+    Txtllicno.Text = ""
+    Txtplicno.Text = ""
+    txtaddress.Text = ""
+    Txtlicno.Text = ""
+End Sub
+Public Sub Enable()
+    Txtdate.Enabled = True
+    Txtexpdt.Enabled = True
+    Txtissudt.Enabled = True
+    Txtexpdt.Enabled = True
+    Cmblitype.Enabled = True
+    Txtllicno.Enabled = True
+    Txtplicno.Enabled = True
+    txtaddress.Enabled = True
+    Txtlicno.Enabled = True
+    cmbname.Enabled = True
+End Sub
+Public Sub Disable()
+    Txtdate.Enabled = False
+    Txtexpdt.Enabled = False
+    Txtissudt.Enabled = False
+    Txtexpdt.Enabled = False
+    Cmblitype.Enabled = False
+    Txtllicno.Enabled = False
+    Txtplicno.Enabled = False
+    txtaddress.Enabled = False
+    Txtlicno.Enabled = False
+    cmbname.Enabled = False
+End Sub
+
+Private Sub cmbname_Click()
+       If rs.State = 1 Then rs.Close
+        rs.Open "Select Add_id,Add_address from addmision where Add_name = '" & (cmbname.Text) & "'", con, 1, 3
+    If rs.BOF = False Then
+        Txtid.Text = rs.Fields(0)
+        txtaddress.Text = rs.Fields(1)
+    End If
+End Sub
+
+Private Sub cmdadd_Click()
+    If CMDADD.Caption = "AddNew" Then
+        CMDADD.Caption = "Save"
+        Enable
+        txtaddress.SetFocus
+        ValueClear
+        If rs.State = 1 Then rs.Close
+            rs.Open "Select max(cust_id) from Lincense", con, 1, 3
+        If rs.BOF = False Then
+            Txtid.Text = rs.Fields(0) + 1
+        End If
+    ElseIf CMDADD.Caption = "Save" Then
+        CMDADD.Caption = "AddNew"
+    If Txtid.Text <> "" And txtaddress.Text <> "" And Txtlicno.Text <> "" And Cmblitype.Text <> "" And Txtissudt.Text <> "" And Txtllicno.Text <> "" Then
+        If rs.State = 1 Then rs.Close
+        con.Execute "Insert into Lincense values (" & (Txtid.Text) & ",'" & (Txtdate.Text) & "','" & (cmbname.Text) & "','" & (Txtlicno.Text) & "','" & (Cmblitype.Text) & "','" & (Txtissudt.Text) & "','" & (Txtllicno.Text) & "','" & (Txtplicno.Text) & "','" & (Txtexpdt.Text) & "','" & (txtaddress.Text) & "')"
+        MsgBox ("Saved Successfully")
+        ValueClear
+        Disable
+        flex
+    Else
+        MsgBox ("Enter All Feilds")
+        Disable
+    End If
+    End If
+End Sub
+
+Private Sub cmddelete_Click()
+If Txtid.Text <> "" And cmbname.Text <> "" And Txtlicno.Text <> "" And Cmblitype.Text <> "" And Txtissudt.Text <> "" And Txtllicno.Text <> "" Then
+        If rs.State = 1 Then rs.Close
+         con.Execute "Delete from Lincense where cust_id  = " & (Txtid.Text) & ""
+         MsgBox ("Record Deleted Successfully")
+       MSFlexGrid1.Clear
+        flex
+    Else
+        MsgBox ("Enter all Fields")
+    End If
+End Sub
+
+Private Sub CMDEXIT_Click()
+rs.Close
+Unload Me
+DRIVINGMDI.File.Enabled = True
+    DRIVINGMDI.Forms.Enabled = True
+    DRIVINGMDI.Reports.Enabled = True
+End Sub
+
+Private Sub cmdupdate_Click()
+    If CMDUPDATE.Caption = "Modify" Then
+        CMDUPDATE.Caption = "Update"
+        Enable
+    ElseIf CMDUPDATE.Caption = "Update" Then
+        CMDUPDATE.Caption = "Modify"
+        If rs.State = 1 Then rs.Close
+        If Txtid.Text <> "" And cmbname.Text <> "" And Txtlicno.Text <> "" And Cmblitype.Text <> "" And Txtissudt.Text <> "" And Txtllicno.Text <> "" Then
+            con.Execute "Update lincense set cust_date = '" & (Txtdate.Text) & "',cust_name = '" & (cmbname.Text) & "',cust_lince_no = '" & (Txtlicno.Text) & "',cust_lin_type= '" & (Cmblitype.Text) & "',cust_lin_date= '" & (Txtissudt.Text) & "',cust_lin_learn_no= '" & (Txtllicno.Text) & "',cust_lin_perm_no= '" & (Txtplicno.Text) & "', cust_lin_exp_date= '" & (Txtexpdt.Text) & "' ,cust_address = '" & (txtaddress.Text) & "'where cust_id = " & (Txtid.Text) & ""
+            MsgBox ("Modified Successfully")
+            ValueClear
+            Disable
+            flex
+        Else
+            MsgBox ("Enter all Fields")
+            Disable
+        End If
+    End If
+End Sub
+
+Private Sub Command4_Click()
+    Unload Me
+End Sub
+
+Private Sub Form_Load()
+    CMDADD.Caption = "AddNew"
+    CMDUPDATE.Caption = "Modify"
+    CMDDELETE.Caption = "Delete"
+    If rs.State = 1 Then rs.Close
+  rs.Open "select * from lincense ", con, 1, 3
+  rs.MoveLast
+  If rs.BOF = False Then
+          Txtid.Text = rs!cust_id
+            Txtdate.Text = rs!cust_date
+           cmbname.Text = rs!cust_name
+            Txtlicno.Text = rs!cust_lince_no
+            Cmblitype.Text = rs!cust_lin_type
+            Txtissudt.Text = rs!cust_lin_date
+            Txtllicno.Text = rs!cust_lin_learn_no
+            Txtplicno.Text = rs!cust_lin_perm_no
+            Txtexpdt.Text = rs!cust_lin_exp_date
+            txtaddress.Text = rs!cust_address
+    Disable
+    flex
+    Txtdate.Text = Format(Now, "dd/mmm/yyyy")
+    If rs.State = 1 Then rs.Close
+        rs.Open "Select Add_id,Add_Name from addmision", con, 1, 3
+    If rs.BOF = False Then
+        While Not rs.EOF
+            cmbname.AddItem rs!Add_Name
+            cmbname.ItemData(cmbname.NewIndex) = rs!Add_id
+            rs.MoveNext
+        Wend
+    End If
+    End If
+End Sub
+Public Sub flex()
+        MSFlexGrid1.TextMatrix(0, 0) = "ID"
+        MSFlexGrid1.TextMatrix(0, 1) = "DATE"
+        MSFlexGrid1.TextMatrix(0, 2) = "NAME"
+        MSFlexGrid1.TextMatrix(0, 3) = "LIC NO"
+        MSFlexGrid1.TextMatrix(0, 4) = "LIC TYPE"
+        MSFlexGrid1.TextMatrix(0, 5) = "LIC ISSU"
+        MSFlexGrid1.TextMatrix(0, 6) = "EXP DATE"
+        MSFlexGrid1.TextMatrix(0, 7) = "LIC LEARN"
+        MSFlexGrid1.TextMatrix(0, 8) = "PER LIC"
+        MSFlexGrid1.TextMatrix(0, 9) = "ADDRESS"
+        
+        MSFlexGrid1.ColWidth(0) = 400
+        MSFlexGrid1.ColWidth(1) = 1500
+        MSFlexGrid1.ColWidth(2) = 2200
+        MSFlexGrid1.ColWidth(3) = 900
+        MSFlexGrid1.ColWidth(4) = 1000
+  MSFlexGrid1.ColWidth(9) = 2000
+    Dim inti As Integer
+    If rs.State = 1 Then rs.Close
+        rs.Open "select * from Lincense", con, 1, 3
+        inti = 1
+        If rs.BOF = False Then
+        While Not rs.EOF = True
+            MSFlexGrid1.TextMatrix(inti, 0) = rs!cust_id
+            MSFlexGrid1.TextMatrix(inti, 1) = rs!cust_date
+            MSFlexGrid1.TextMatrix(inti, 2) = rs!cust_name
+            MSFlexGrid1.TextMatrix(inti, 3) = rs!cust_lince_no
+            MSFlexGrid1.TextMatrix(inti, 4) = rs!cust_lin_type
+            MSFlexGrid1.TextMatrix(inti, 5) = rs!cust_lin_date
+            MSFlexGrid1.TextMatrix(inti, 6) = rs!cust_lin_exp_date
+            MSFlexGrid1.TextMatrix(inti, 7) = rs!cust_lin_learn_no
+            MSFlexGrid1.TextMatrix(inti, 8) = rs!cust_lin_perm_no
+            MSFlexGrid1.TextMatrix(inti, 9) = rs!cust_address
+            rs.MoveNext
+            inti = inti + 1
+            MSFlexGrid1.Rows = MSFlexGrid1.Rows + 1
+            Wend
+            MSFlexGrid1.Rows = MSFlexGrid1.Rows - 1
+        End If
+End Sub
+
+Private Sub MSFlexGrid1_Click()
+    Txtid.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 0)
+    Txtdate.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 1)
+    cmbname.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 2)
+    Txtlicno.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 3)
+    Cmblitype.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 4)
+    Txtissudt.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 5)
+    Txtllicno.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 6)
+   Txtexpdt.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 7)
+    Txtplicno.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 8)
+    txtaddress.Text = MSFlexGrid1.TextMatrix(MSFlexGrid1.RowSel, 9)
+End Sub
