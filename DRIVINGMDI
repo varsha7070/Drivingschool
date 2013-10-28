@@ -1,0 +1,66 @@
+Private Sub Admission_Click()
+ If DataEnvironment1.Connection1.State = 1 Then
+DataEnvironment1.Connection1.Close
+End If
+DataEnvironment1.Connection1.Open
+DataEnvironment1.Command2
+  DataReport2.Show
+End Sub
+Private Sub AdmissionForm_Click()
+    Add_Frm.Show
+    Forms.Enabled = False
+    Reports.Enabled = False
+    File.Enabled = False
+End Sub
+Private Sub Exit_Click()
+    Unload Me
+End Sub
+Private Sub Fees_Click()
+    FEES_FRM.Show
+Forms.Enabled = False
+    Reports.Enabled = False
+    File.Enabled = False
+End Sub
+Private Sub FeesRep_Click()
+ If DataEnvironment1.Connection1.State = 1 Then
+DataEnvironment1.Connection1.Close
+End If
+DataEnvironment1.Connection1.Open
+DataEnvironment1.Command3
+DataReport3.Show
+End Sub
+Private Sub Lincense_Click()
+ If DataEnvironment1.Connection1.State = 1 Then
+DataEnvironment1.Connection1.Close
+End If
+DataEnvironment1.Connection1.Open
+DataEnvironment1.Command4
+DataReport4.Show
+End Sub
+Private Sub LincenseForm_Click()
+    Lic_frm.Show
+Forms.Enabled = False
+    Reports.Enabled = False
+    File.Enabled = False
+End Sub
+Private Sub Login_Click()
+    Login_frm.Show
+End Sub
+Private Sub MDIForm_Load()
+    Forms.Enabled = False
+    Reports.Enabled = False
+End Sub
+Private Sub Visitor_Click()
+ If DataEnvironment1.Connection1.State = 1 Then
+DataEnvironment1.Connection1.Close
+End If
+DataEnvironment1.Connection1.Open
+DataEnvironment1.Command1
+DataReport1.Show
+End Sub
+Private Sub VisitorForm_Click()
+    Vistor_frm.Show
+Forms.Enabled = False
+    Reports.Enabled = False
+    File.Enabled = False
+End Sub
